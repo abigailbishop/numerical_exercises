@@ -19,9 +19,17 @@
 \usepackage[numbers,sort&compress]{natbib}
 
 % code listings
-\usepackage{listings}
+\usepackage[procnames]{listings}
 
-\graphicspath{{preface/}{intro/}{finite-volume/}{advection/}{burgers/}{diffusion/}{Euler/}{incompressible/}{multigrid/}{multiphysics/}{low_mach/}{radiation/}{pyro/}}
+\lstset{basicstyle=\ttfamily\small, 
+        keywordstyle=\color{keywords},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        showstringspaces=false,
+        identifierstyle=\color{blue},
+        procnamekeys={def,class}}
+
+\graphicspath{{preface/}{intro/}{finite-volume/}{advection/}{burgers/}{diffusion/}{Euler/}{incompressible/}{multigrid/}{multiphysics/}{low_mach/}{radiation/}{pyro/}{higher-order/}}
 
 \usepackage{longtable}
 
@@ -496,14 +504,20 @@ Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA
 \part{Advection and Hydrodynamics}
 
 %\addtocontents{exc}{\protect\addvspace{10pt}}%
-\chapter{Advection}
+\chapter{Advection Basics}
 
-\input advection/advection.tex
+\input advection/advection-basics.tex
+
+\chapter{Second- (and Higher-) Order Advection}
+
+\input advection/advection-higherorder.tex
 
 %\addtocontents{exc}{\protect\addvspace{10pt}}%
 \chapter{Burgers' Equation}
 
 \input burgers/burgers.tex
+
+\input higher-order/higher-order-burgers.tex
 
 %\addtocontents{exc}{\protect\addvspace{10pt}}%
 \chapter{Euler Equations: Theory}
@@ -515,6 +529,7 @@ Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA
 
 \input Euler/Euler-methods.tex
 
+\input higher-order/higher-order-euler.tex
 
 \ifdefined\debugmode
 \chapter{Hydrodynamics Test Problems}

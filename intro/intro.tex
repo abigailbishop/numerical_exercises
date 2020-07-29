@@ -626,7 +626,7 @@ Using this approximation, we can expand the righthand side vector,
 {\bf f}(t^{n+1},{\bf y}^{n+1}) = {\bf f}(t^{n+1}, {\bf y}^{n+1}_0) +
      \left . \frac{\partial {\bf f}}{\partial {\bf y}} \right |_0 \Delta {\bf y}_0 + \ldots
 \end{equation}
-Here we recognize the Jacobin matrix, ${\bf J} \equiv \partial {\bf
+Here we recognize the Jacobian matrix, ${\bf J} \equiv \partial {\bf
   f}/\partial {\bf y}$,
 \begin{equation}
 \renewcommand\arraystretch{1.5}
@@ -712,10 +712,10 @@ analysis, as well as for solving certain linear problems (see, e.g.,
 \S~\ref{elliptic:sec:fft}).
 
 For a function, $f(x)$ sampled at $N$ equally-spaced points (such that
-$f_n = f(x_n)$, the discrete Fourier transform, $\mathcal{F}_k$ is
+$f_n = f(x_n)$), the discrete Fourier transform, $\mathcal{F}_k$ is
 written as:
 \begin{equation}
-\mathcal{F}_k = \sum_{n=0}^{N-1} f_n e^{-2\pi i n k /N}
+\mathcal{F}_k = \sum_{n=0}^{N-1} f_n e^{-2\pi i n k /N} \qquad k \in [0, N-1]
 \end{equation}
 The exponential in the sum brings in a real (cosine terms, symmetric
 functions) and imaginary (sine terms, antisymmetric functions) part.
@@ -728,19 +728,22 @@ parts into an amplitude and phase.
 
 The inverse transform is:
 \begin{equation}
-f_n = \frac{1}{N} \sum_{n=0}^{N-1} \mathcal{F}_k e^{2\pi i n k /N}
+f_n = \frac{1}{N} \sum_{k=0}^{N-1} \mathcal{F}_k e^{2\pi i n k /N} \qquad n \in [0, N-1]
 \end{equation}
 The $1/N$ normalization is a consequence of Parseval's theorem---the
 total power in real space must equal the total power in frequency
 space.  One way to see that this must be the case is to consider the
 discrete transform of $f(x) = 1$, which should be a delta function.
 
-Note that if $f(x)$ is real-valued, then the transform $\mathcal{F}_k$
-has 2 numbers (the real and imaginary parts) for each of our original
-$N$ real values.  Since we cannot create information in frequency
-space where there was no corresponding real-space information, half of
-the $\mathcal{F}_k$'s are redundant (and $\mathcal{F}_{-k} =
-\mathcal{F}^\star_k$).
+The FFT of a discrete function has the same amount of information as
+the original discrete function.  Note that if $f(x)$ is real-valued,
+then the transform $\mathcal{F}_k$ has 2 numbers (the real and
+imaginary parts) for each of our original $N$ real values.  This would
+mean that we have $2N$ pieces of information in frequency space where
+we only had $N$ pieces of information in real space.  Since we cannot
+create information in frequency space where there was no corresponding
+real-space information, half of the $\mathcal{F}_k$'s are redundant
+(and $\mathcal{F}_{-k} = \mathcal{F}^\star_k$).
 
 Directly computing $\mathcal{F}_k$ for each $k$ takes $\mathcal{O}(N^2)$
 operations.  The fast Fourier transform (FFT) is a reordering of the
@@ -769,11 +772,23 @@ books can give a good introduction to how to design an FFT algorithm.
     imaginary parts will be $1/\sqrt{2}$.
   \end{itemize}
 
-An example of the transform of a pure sine wave is shown in Figure~\ref{fig:intro:fft}.
+An example of the transform of a single-frequency sine wave with a
+phase shift is shown in Figure~\ref{fig:intro:fft}.
 
 }
 \end{exercise}
 
+The FFT assumes that a function is periodic and that the points are
+evenly spaced.  If the function is not periodic, then a signal will
+show up in the FFT at a wavenumber corresponding to the size of the
+domain.  Related to this, you need to ensure that your points are
+evenly spaced even at the boundary, e.g., if you have a function on
+$[0, 1]$ represented by 5 points, you want the points to be $\{0, 0.2,
+0.4, 0.6, 0.8\}$ and not $\{0, 0.25, 0.5, 0.75, 1\}$.  In the latter
+case, $0$ and $1$ are the same function value (due to periodicity),
+but the FFT assumes that all points are evenly spaced (even across the
+boundary), so it will think that there is a spacing of $0.25$ between
+these end points.
 
 \begin{figure}[t]
 \centering

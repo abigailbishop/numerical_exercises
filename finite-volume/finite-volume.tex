@@ -1,3 +1,5 @@
+\label{ch:fv}
+
 \section{Discretization}
 
 The physical systems we model are described by continuous mathematical
@@ -48,7 +50,7 @@ widely used in engineering together with unstructured grids.  A type
 of finite-element method called a {\em Galerkin method} can be formed
 by integrating the continuous function against a compact basis set
 represented by tetrahedra.  These methods work well with the irregular
-geometries that arise in engineering.  
+geometries that arise in engineering.
 \fi
 
 Once a grid is established, the system of PDEs is converted into a
@@ -204,7 +206,7 @@ that when $f(x)$ is averaged over a cell, it returns the original
 cell-average.
 
 \begin{exercise}[Conservative interpolation]
-{\label{ex:consinterp} 
+{\label{ex:consinterp}
 
 Consider three cell averages: $\favg{f}_{i-1}$, $\favg{f}_{i}$, $\favg{f}_{i+1}$.  Fit a quadratic polynomial through these points,
  \begin{equation}
@@ -255,9 +257,9 @@ either side of zone $i$ we reach when computing our approximation.
 
 For example, a second derivative can be discretized as:
 \begin{equation}
-\left . \frac{df}{dx} \right |_i = \frac{f_{i+1} - 2 f_i + f_{i-1}}{\Delta x^2}
+\left . \frac{d^2 f}{dx^2} \right |_i = \frac{f_{i+1} - 2 f_i + f_{i-1}}{\Delta x^2}
 \end{equation}
-The stencil on the righthand size encompasses 3 zones.
+The stencil on the righthand side encompasses 3 zones.
 
 \subsection{Conservation}
 
@@ -360,6 +362,28 @@ f_{\mathrm{lo}-1} &=& f_\mathrm{lo}
 \end{eqnarray}
 
 
+\section{Numerical implementation details}
+
+The computational grids used for finite-volume techniques maps nicely
+onto multidimensional arrays.  For the cell-average data, a typical
+array would be dimensioned as
+\begin{lstlisting}[language=Python]
+  ilo = ng
+  ihi = nx + ng - 1
+  state = np.zeros((nx + 2*ng, nvar))
+\end{lstlisting}
+in python (using NumPy), where {\tt nx} is the number of zones in the 
+domain and {\tt ng} is the number of ghost cells.  For some problems,
+there might be more than one state variable, so {\tt nvar}, is the number
+of state variables that live in each zone.  We would then loop from {\tt ilo}
+to {\tt ihi} to access the state data in the grid interior.
+
+Fluxes are also stored in arrays, but since we cannot index an array with
+half-integer indices, the standard convention is that the index {\tt i} in an
+array refers to the flux on the {\em left} edge of that zone.  I.e.,
+\begin{equation*}
+\mathtt{flux[i]} \quad \longleftrightarrow \quad F_{i-1/2}
+\end{equation*}
 
 \section{Going further}
 
@@ -398,10 +422,10 @@ f_{\mathrm{lo}-1} &=& f_\mathrm{lo}
   consistency.
 
 \item {\em Mapped grids}: mapped grids are (usually) logically
-  Cartesian grids that use a function (map) to transform from 
+  Cartesian grids that use a function (map) to transform from
   a rectangular mesh (that corresponds to the array in memory)
   to a general curvilinear grid.  These maintain the performance
-  characteristics of structured grids, since any zone can be 
+  characteristics of structured grids, since any zone can be
   directly indexed with an integer for each spatial dimension. \MarginPar{reference the Calhoun paper}
 
 \item {\em Lagrangian grids}: a hybrid of particle and grid methods is
